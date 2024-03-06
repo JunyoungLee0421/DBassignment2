@@ -165,3 +165,11 @@ select * from message;
 select * from room;
 select * from room_user;
 select * from message_emoji_user;
+
+#get chat rooms that a user belongs to
+select R.* from user U
+join room_user RU on RU.user_id = U.user_id
+join room R on RU.room_id = R.room_id
+where U.username = 1;
+
+delete from user where user_id in (7,8,9);

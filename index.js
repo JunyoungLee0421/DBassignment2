@@ -11,6 +11,7 @@ const saltRounds = 12;
 const database = include('databaseConnection');
 const db_utils = include('database/db_utils');
 const db_users = include('database/users');
+const db_manager = include('database/script.js')
 const success = db_utils.printMySQLVersion();
 
 const port = process.env.PORT || 3000;
@@ -49,38 +50,31 @@ app.use(session({
 
 app.get('/', (req, res) => {
     if (req.session.authenticated) {
-        res.render("authindex", { name: req.session.username });
+        res.redirect("authindex");
     } else {
         res.render("index");
     }
 });
 
-app.get('/about', (req, res) => {
-    var color = req.query.color;
-    if (!color) {
-        color = "black";
-    }
+app.get('/authindex', async (req, res) => {
+    var username = req.session.username;
+    var success = await db_manager.getGroups({ user: username });
 
-    res.render("about", { color: color });
-});
-
-app.get('/contact', (req, res) => {
-    var missingEmail = req.query.missing;
-    res.render("contact", { missing: missingEmail });
-});
-
-app.post('/submitEmail', (req, res) => {
-    var email = req.body.email;
-    if (!email) {
-        res.redirect('/contact?missing=1');
-    }
-    else {
-        res.render("submitEmail", { email: email });
-    }
-});
+    res.render("authindex", { name: req.session.username })
+    // if (success) {
+    //     var results = await db_users.getUsers();
+    //     req.session.authenticated = true;
+    //     req.session.username = username;
+    //     req.session.cookie.maxAge = expireTime;
+    //     res.redirect('/');
+    //     // res.render("members", { users: results });
+    // }
+    // else {
+    //     res.render("errorMessage", { error: "Failed to create user." });
+    // }
+})
 
 app.get('/createTables', async (req, res) => {
-
     const create_tables = include('database/create_tables');
 
     var success = create_tables.createTables();
@@ -121,19 +115,11 @@ app.post('/signup', async (req, res) => {
 
     if (!username) {
         res.redirect('signup?missingusername=1')
+        return;
     } else if (!password) {
         res.redirect('signup?missingpassword=1')
-    } app.post('/surveyStart', (req, res) => {
-        var missingFields = req.param.invalid;
-        console.log(missingFields)
-        if (missingFields) {
-            res.render("survey", { missingFields: 1 });
-        }
-        else {
-            res.render("survey");
-        }
-    });
-
+        return;
+    }
     var success = await db_users.createUser({ user: username, hashedPassword: hashedPassword });
 
     if (success) {
