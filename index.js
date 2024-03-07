@@ -61,20 +61,17 @@ app.get('/authindex', async (req, res) => {
     var username = req.session.username;
     var results = await db_manager.getGroups({ user: username });
 
-    // var lastMessageDates = []
     if (results) { //if there is results
         for (var i = 0; i < results.length; i++) {
-            // console.log(`${i} : result : `)
-            // console.log(results[i])
             var lastDate = await db_manager.getLastSentMessage({ groupname: results[i].name });
-            results[i].last_sent_message_datetime = lastDate[0].sent_datetime;
-            // lastMessageDates.push(lastDate);
+            if (lastDate[0] == undefined) {
+                results[i].last_sent_message_datetime = "NO MESSAGE YET";
+            } else {
+                results[i].last_sent_message_datetime = lastDate[0].sent_datetime;
+            }
         }
-        console.log(results)
-        // console.log(lastMessageDates);
         res.render("authindex", { name: username, results: results })
     }
-    //console.log('user not found');
 })
 
 app.get('/chatRoom', async (req, res) => {
@@ -101,25 +98,32 @@ app.post('/createGroup', (req, res) => {
     res.redirect('/createGroup');
 })
 
-// app.post('/publishGroup', (req, res) => {
-//     const create_room = include('database/create_room');
+app.post('/publishGroup', async (req, res) => {
+    const create_room = include('database/create_room');
 
-//     var roomname = req.body.roomname;
-//     var selectedUsers = req.body.selectedUsers;
-//     var roomId = create_room.getRoomId({ roomname: roomname });
-//     console.log(selectedUsers);
+    var roomname = req.body.roomname;
+    var selectedUsers = req.body.selectedUsers;
+    var username = req.session.username;
 
-//     var create_room_success = create_room.createRoom({ roomname: roomname });
-//     var insert_user_success = create_room.insertUsers({ roomId: roomId, selectedUsers: selectedUsers })
+    var create_room_success = await create_room.createRoom({ roomname: roomname });
 
-//     if (create_room_success && insert_user_success) {
-//         console.log("successfully create group and insert users");
-//         res.redirect('/');
-//     }
-//     else {
-//         res.render("errorMessage", { error: "Failed to create user." });
-//     }
-// })
+    var roomID = await create_room.getRoomId({ roomname: roomname });
+    var userID = await create_room.getUserId({ username: username });
+    if (create_room_success) { //if create room success 
+        try {
+            await create_room.insertUsers({ room_id: roomID[0].room_id, user_id: userID[0].user_id })
+            for (var i = 0; i < selectedUsers.length; i++) {
+                await create_room.insertUsers({ room_id: roomID[0].room_id, user_id: selectedUsers[i] })
+                console.log("successfully insert user into the room");
+            }
+            res.redirect('/')
+        } catch (error) {
+            res.render("errorMessage", { error: "Failed to insert user." });
+        }
+    } else {
+        res.render("errorMessage", { error: "Failed to create user." });
+    }
+})
 
 app.get('/createTables', async (req, res) => {
     const create_tables = include('database/create_tables');

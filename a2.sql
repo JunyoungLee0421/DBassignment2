@@ -196,6 +196,16 @@ and RU.room_id = (
 order by sent_datetime desc limit 1; 
 
 #number of unread messages
+select ru.user_id, ru.room_id,  MAX(room_unread.sent_datetime) AS last_message_time,COUNT(CASE WHEN room_unread.message_id is not NULL THEN 1 ELSE NULL END) AS unread_message_count
+from  room_user as ru
+left join (
+    select  ru.room_id, m.message_id, m.sent_datetime
+    from message as m
+    join room_user as ru on m.room_user_id = ru.room_user_id
+    where m.message_id > ru.last_read_message_id
+) as room_unread on room_unread.room_id = ru.room_id
+where ru.user_id=1
+group by ru.user_id, ru.room_id;
 
 #total number of groups i am in
 
@@ -203,7 +213,17 @@ order by sent_datetime desc limit 1;
 select username from user
 where username != "";
 
+select room_id from room where name = "newRoom";
 #create new group
 insert into room (name, start_datetime) values ("new room", "2024-03-06");
+insert into room_user (user_id, room_id, last_read_message_id) values ();
 
+#detele & reset auto increment statements
 delete from user where user_id in (7,8,9);
+
+delete from room_user where room_user_id in (32, 33, 34, 35);
+ALTER TABLE room_user AUTO_INCREMENT = 32;
+delete from room where room_id in (9, 10);
+ALTER TABLE room AUTO_INCREMENT = 9;
+
+
