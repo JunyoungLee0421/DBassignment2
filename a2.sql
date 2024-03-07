@@ -170,6 +170,40 @@ select * from message_emoji_user;
 select R.* from user U
 join room_user RU on RU.user_id = U.user_id
 join room R on RU.room_id = R.room_id
-where U.username = 1;
+where U.user_id = 1;
+
+#select message from the specific group with user names
+select M.message_id, M.sent_datetime, M.text, RU.user_id, U.username from message M
+join room_user RU on M.room_user_id = RU.room_user_id
+join user U on RU.user_id = U.user_id
+and RU.room_id = (
+	select room_id from room 
+	where name = "Cats")
+order by sent_datetime;    
+
+#give all the members in the group excluding myself
+select U.username from room R
+join room_user RU on R.room_id = RU.room_id and R.name = "Cats"
+join user U on RU.user_id = U.user_id and U.username != "tim";   
+
+#date of most recent message in this group
+select M.sent_datetime from message M
+join room_user RU on M.room_user_id = RU.room_user_id
+join user U on RU.user_id = U.user_id
+and RU.room_id = (
+	select room_id from room 
+	where name = "Cats")
+order by sent_datetime desc limit 1; 
+
+#number of unread messages
+
+#total number of groups i am in
+
+#get all the user without myself
+select username from user
+where username != "";
+
+#create new group
+insert into room (name, start_datetime) values ("new room", "2024-03-06");
 
 delete from user where user_id in (7,8,9);

@@ -9,19 +9,19 @@ async function createTables() {
             PRIMARY KEY (user_id),
             UNIQUE INDEX unique_username (username ASC) VISIBLE);
 	`;
-	
+
 	try {
 		const results = await database.query(createUserSQL);
 
-        console.log("Successfully created tables");
+		console.log("Successfully created tables");
 		console.log(results[0]);
 		return true;
 	}
-	catch(err) {
+	catch (err) {
 		console.log("Error Creating tables");
-        console.log(err);
+		console.log(err);
 		return false;
 	}
 }
 
-module.exports = {createTables};
+module.exports = { createTables };

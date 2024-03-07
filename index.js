@@ -5,6 +5,7 @@ const express = require('express');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
+const { use } = require('bcrypt/promises');
 const saltRounds = 12;
 
 
@@ -58,21 +59,67 @@ app.get('/', (req, res) => {
 
 app.get('/authindex', async (req, res) => {
     var username = req.session.username;
-    var success = await db_manager.getGroups({ user: username });
+    var results = await db_manager.getGroups({ user: username });
 
-    res.render("authindex", { name: req.session.username })
-    // if (success) {
-    //     var results = await db_users.getUsers();
-    //     req.session.authenticated = true;
-    //     req.session.username = username;
-    //     req.session.cookie.maxAge = expireTime;
-    //     res.redirect('/');
-    //     // res.render("members", { users: results });
-    // }
-    // else {
-    //     res.render("errorMessage", { error: "Failed to create user." });
-    // }
+    // var lastMessageDates = []
+    if (results) { //if there is results
+        for (var i = 0; i < results.length; i++) {
+            // console.log(`${i} : result : `)
+            // console.log(results[i])
+            var lastDate = await db_manager.getLastSentMessage({ groupname: results[i].name });
+            results[i].last_sent_message_datetime = lastDate[0].sent_datetime;
+            // lastMessageDates.push(lastDate);
+        }
+        console.log(results)
+        // console.log(lastMessageDates);
+        res.render("authindex", { name: username, results: results })
+    }
+    //console.log('user not found');
 })
+
+app.get('/chatRoom', async (req, res) => {
+    var groupname = req.query.name;
+    var username = req.session.username;
+
+    var messages = await db_manager.getMessages({ groupname: groupname });
+    var members = await db_manager.getMembers({ groupname: groupname, username: username });
+
+    console.log(members)
+    if (messages && members) {
+        res.render("chatRoom", { messages: messages, members: members })
+    }
+})
+
+app.get('/createGroup', async (req, res) => {
+    var username = req.session.username;
+    var userResults = await db_manager.getUsers({ username: username });
+
+    res.render("createGroup", { userResults: userResults })
+})
+
+app.post('/createGroup', (req, res) => {
+    res.redirect('/createGroup');
+})
+
+// app.post('/publishGroup', (req, res) => {
+//     const create_room = include('database/create_room');
+
+//     var roomname = req.body.roomname;
+//     var selectedUsers = req.body.selectedUsers;
+//     var roomId = create_room.getRoomId({ roomname: roomname });
+//     console.log(selectedUsers);
+
+//     var create_room_success = create_room.createRoom({ roomname: roomname });
+//     var insert_user_success = create_room.insertUsers({ roomId: roomId, selectedUsers: selectedUsers })
+
+//     if (create_room_success && insert_user_success) {
+//         console.log("successfully create group and insert users");
+//         res.redirect('/');
+//     }
+//     else {
+//         res.render("errorMessage", { error: "Failed to create user." });
+//     }
+// })
 
 app.get('/createTables', async (req, res) => {
     const create_tables = include('database/create_tables');
@@ -87,15 +134,6 @@ app.get('/createTables', async (req, res) => {
 });
 
 
-app.get('/signup', (req, res) => {
-    var missingusername = req.query.missingusername;
-    var missingpassword = req.query.missingpassword;
-    res.render("signup", {
-        missingusername: missingusername,
-        missingpassword: missingpassword
-    })
-});
-
 app.get('/login', (req, res) => {
     var badlogin = req.query.badlogin;
     var missingusername = req.query.missingusername;
@@ -105,6 +143,15 @@ app.get('/login', (req, res) => {
         missingpassword: missingpassword,
         badlogin: badlogin
     });
+});
+
+app.get('/signup', (req, res) => {
+    var missingusername = req.query.missingusername;
+    var missingpassword = req.query.missingpassword;
+    res.render("signup", {
+        missingusername: missingusername,
+        missingpassword: missingpassword
+    })
 });
 
 app.post('/signup', async (req, res) => {

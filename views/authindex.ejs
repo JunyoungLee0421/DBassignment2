@@ -1,6 +1,44 @@
 <%- include("templates/header") %>
     <h1>Hello <%= name%>!</h1>
-    <a href="/members"><button>Go to members arena</button></a>
+    <h2>Your chats</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Group ID</th>
+                <th>Group Name</th>
+                <th>Last message Date</th>
+                <th># unread</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for (var i=0; i < results.length; i++) { %>
+                <tr>
+                    <td>
+                        <%= results[i].room_id %>
+                    </td>
+                    <td>
+                        <a href="chatRoom?name=<%=results[i].name%>">
+                            <%= results[i].name %>
+                        </a>
+                        <!-- <form action='/groupSelect' method='post'>
+                            <a href="chatRoom?name=<%=results[i].name%>">
+                                <%= results[i].name %>
+                            </a>
+                        </form> -->
+                    </td>
+                    <td>
+                        <%= results[i].last_sent_message_datetime %>
+                    </td>
+                    <td>
+                        TBD
+                    </td>
+                </tr>
+                <% } %>
+        </tbody>
+    </table>
+    <form action='/createGroup' method='post'>
+        <button>New Group</button>
+    </form>
     <form action='/logout' method='post'>
         <button>Logout</button>
     </form>
