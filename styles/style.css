@@ -1,0 +1,39 @@
+#chatroom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+#chatbox {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 20px;
+    width: 600px;
+    /* Set a maximum width if desired */
+}
+
+#messagebox {
+    display: flex;
+    flex-direction: column;
+}
+
+.message {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    max-width: 70%;
+    /* Set a maximum width for the messages */
+}
+
+.others-message {
+    background-color: #e0e0e0;
+    /* Set a background color for others' messages */
+    align-self: flex-start;
+}
+
+.your-message {
+    background-color: #6a8ae8;
+    /* Set a background color for your messages */
+    align-self: flex-end;
+}

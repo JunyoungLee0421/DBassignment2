@@ -57,12 +57,13 @@ async function getLastSentMessage(postData) {
 async function getMembers(postData) {
     let getMemberSQL = `
     select U.username from room R
-    join room_user RU on R.room_id = RU.room_id and R.name = :groupname
+    join room_user RU on R.room_id = RU.room_id and R.room_id = :room_id
     join user U on RU.user_id = U.user_id and U.username != :username;    
     `;
 
     let params = {
-        groupname: postData.groupname,
+        //groupname: postData.groupname,
+        room_id: postData.room_id,
         username: postData.username
     }
 
@@ -85,25 +86,24 @@ async function getMessages(postData) {
     select M.message_id, M.sent_datetime, M.text, RU.user_id, U.username from message M
     join room_user RU on M.room_user_id = RU.room_user_id
     join user U on RU.user_id = U.user_id
-    and RU.room_id = (
-        select room_id from room 
-        where name = :groupname)
+    and RU.room_id = :room_id
     order by sent_datetime;     
     `;
 
     let params = {
-        groupname: postData.groupname
+        room_id: postData.room_id
+        //groupname: postData.groupname
     }
 
     try {
         const results = await database.query(getMessageSQL, params);
 
-        console.log("Successfully loaded groups");
+        console.log("Successfully loaded messages");
         console.log(results[0]);
         return results[0];
     }
     catch (err) {
-        console.log("Error getting groups");
+        console.log("Error getting messages");
         console.log(err);
         return false;
     }
@@ -127,7 +127,7 @@ async function getUsers(postData) {
         return results[0];
     }
     catch (err) {
-        console.log("Error getting groups");
+        console.log("Error getting users");
         console.log(err);
         return false;
     }

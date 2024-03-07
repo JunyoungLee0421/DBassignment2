@@ -1,5 +1,36 @@
 <%- include("templates/header") %>
-    <h2>Inside chat room</h2>
+    <div id="chatroom">
+        <div id="chatbox">
+            <h2>Chat room</h2>
+            <div>
+                <p>current users in the group : </p>
+                <% for (var i=0; i < members.length; i++) { %>
+                    <p>
+                        <%= members[i].username %>
+                    </p>
+                    <% } %>
+            </div>
+
+            <div id="messagebox">
+                <% for (var i=0; i < messages.length; i++) { %>
+                    <% if (messages[i].user_id==user_id) { %>
+                        <p class="message your-message">
+                            <%= messages[i].text %>
+                        </p>
+                        <% } else { %>
+                            <p class="message others-message">
+                                <%= messages[i].text %>
+                            </p>
+                            <% } %>
+                                <% } %>
+            </div>
+
+            <form action='/sendText' method='post'>
+                <input name='text' type='text' placeholder='Enter text...'>
+                <button>Submit</button>
+            </form>
+        </div>
+    </div>
     <form action='/logout' method='post'>
         <button>Logout</button>
     </form>

@@ -17,14 +17,12 @@
                         <%= results[i].room_id %>
                     </td>
                     <td>
-                        <a href="chatRoom?name=<%=results[i].name%>">
+                        <a href="chatRoom/<%=results[i].room_id%>">
                             <%= results[i].name %>
                         </a>
-                        <!-- <form action='/groupSelect' method='post'>
-                            <a href="chatRoom?name=<%=results[i].name%>">
-                                <%= results[i].name %>
-                            </a>
-                        </form> -->
+                        <!-- <a href="chatRoom?name=<%=results[i].name%>">
+                            <%= results[i].name %>
+                        </a> -->
                     </td>
                     <td>
                         <%= results[i].last_sent_message_datetime %>
@@ -36,6 +34,8 @@
                 <% } %>
         </tbody>
     </table>
+    <p># of groups : <%= results.length %>
+    </p>
     <form action='/createGroup' method='post'>
         <button>New Group</button>
     </form>

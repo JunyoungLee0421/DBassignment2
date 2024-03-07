@@ -74,16 +74,18 @@ app.get('/authindex', async (req, res) => {
     }
 })
 
-app.get('/chatRoom', async (req, res) => {
-    var groupname = req.query.name;
+app.get('/chatRoom/:room_id', async (req, res) => {
+    const create_room = include('database/create_room');
+    var room_id = req.params.room_id;
+    //var groupname = req.query.name;
     var username = req.session.username;
-
-    var messages = await db_manager.getMessages({ groupname: groupname });
-    var members = await db_manager.getMembers({ groupname: groupname, username: username });
+    var userID = await create_room.getUserId({ username: username });
+    var messages = await db_manager.getMessages({ room_id: room_id });
+    var members = await db_manager.getMembers({ room_id: room_id, username: username });
 
     console.log(members)
     if (messages && members) {
-        res.render("chatRoom", { messages: messages, members: members })
+        res.render("chatRoom", { messages: messages, members: members, user_id: userID[0].user_id })
     }
 })
 
@@ -186,19 +188,6 @@ app.post('/signup', async (req, res) => {
     }
 
 });
-
-// app.get('/members', (req, res) => {
-//     if (req.session.authenticated) {
-//         randomCat = Math.floor(Math.random() * 3) + 1;
-//         res.render("members", {
-//             username: req.session.username,
-//             cat_photo: `cat${randomCat}`
-//         });
-//     } else {
-//         res.redirect("/");
-//     }
-// });
-
 app.post('/login', async (req, res) => {
     var username = req.body.username;
     var password = req.body.password;
@@ -347,6 +336,7 @@ app.get('/api', (req, res) => {
 });
 
 app.use(express.static(__dirname + "/public"));
+app.use("/styles", express.static("styles"));
 
 app.get("*", (req, res) => {
     res.status(404);

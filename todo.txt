@@ -1,0 +1,9 @@
+1. password validation
+2. show messages
+3. type messages
+4. invite people inside chatroom
+5. # of unread messages
+6. emojis
+7. chatroom에 없으면 못들어가게
+8. css
+9. last sent formatting

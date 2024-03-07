@@ -1,7 +1,7 @@
 <%- include("templates/header") %>
     create room
     <form action='/publishGroup' method='post'>
-        <input name='roomname' type='text' placeholder='enter a room name'>
+        <input name='roomname' type='text' placeholder='enter a room name' required>
         <div class="checkbox-list">
             <% userResults.forEach(user=> { %>
                 <label>
