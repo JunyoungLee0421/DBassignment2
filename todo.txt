@@ -1,10 +1,10 @@
-1. password validation
-2. show messages - show names, when it is sent
+1. password validation -> do it at the end
+2. show messages - show names, when it is sent -> check some css
 3. type messages
 4. invite people inside chatroom (completed)
-5. # of unread messages
+5. # of unread messages -> works, but maybe polish a bit 좀 병신같이씀
 6. emojis
 7. chatroom에 없으면 못들어가게
 8. css
-9. last sent formatting
-10. go back to main page button
+9. last sent formatting (completed)
+10. go back to main page button (completed)

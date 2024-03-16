@@ -18,6 +18,19 @@
     background-color: #f7f7f7;
 }
 
+.my_message_wrapper {
+    align-self: flex-end;
+}
+
+.other_message_wrapper {
+    align-self: flex-start;
+}
+
+.message_info {
+    font-size: 12px;
+    color: #888;
+}
+
 .message {
     padding: 10px;
     margin: 5px;
@@ -28,6 +41,7 @@
 .others-message {
     background-color: #e0e0e0;
     align-self: flex-start;
+    align-content: end;
 }
 
 .your-message {

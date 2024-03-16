@@ -12,7 +12,8 @@ const saltRounds = 12;
 const database = include('databaseConnection');
 const db_utils = include('database/db_utils');
 const db_users = include('database/users');
-const db_manager = include('database/script.js')
+const db_manager = include('database/script.js');
+const create_room = include('database/create_room');
 const success = db_utils.printMySQLVersion();
 
 const port = process.env.PORT || 3000;
@@ -67,10 +68,26 @@ app.get('/authindex', async (req, res) => {
             if (lastDate[0] == undefined) {
                 results[i].last_sent_message_datetime = "NO MESSAGE YET";
             } else {
-                results[i].last_sent_message_datetime = lastDate[0].sent_datetime;
+                const sentDateTime = new Date(lastDate[0].sent_datetime);
+                const currentDate = new Date();
+                const diffInDays = Math.floor((currentDate - sentDateTime) / (1000 * 60 * 60 * 24));
+
+                if (diffInDays === 0) {
+                    results[i].last_sent_message_datetime = sentDateTime.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }) + ' (today)';
+                } else if (diffInDays === 1) {
+                    results[i].last_sent_message_datetime = sentDateTime.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }) + ' (yesterday)';
+                } else if (diffInDays <= 6) {
+                    results[i].last_sent_message_datetime = sentDateTime.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }) + ' (' + diffInDays + ' days ago)';
+                } else {
+                    results[i].last_sent_message_datetime = sentDateTime.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }) + '(more than a week ago)';
+                }
             }
         }
-        res.render("authindex", { name: username, results: results })
+        //get number of unread messages
+        var userID = await create_room.getUserId({ username: username });
+        var unreadMessages = await db_manager.getNumberOfUnreadMessages({ user_id: userID[0].user_id });
+
+        res.render("authindex", { name: username, results: results, unreadMessages: unreadMessages })
     }
 })
 
@@ -261,6 +278,10 @@ app.post('/login', async (req, res) => {
     //user and password combination not found
     res.redirect("/login");
 });
+
+app.post('/home', async (req, res) => {
+    res.redirect('/');
+})
 
 app.post('/logout', async (req, res) => {
     req.session.destroy();

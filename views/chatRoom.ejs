@@ -15,7 +15,52 @@
                     <button>Invite</button>
                 </form> -->
             </div>
+            <div id="messagebox">
+                <% for (var i=0; i < messages.length; i++) { %>
+                    <% var messageTime=new Date(messages[i].sent_datetime); %>
+                        <% var currentTime=new Date(); %>
+                            <% var timeDifference=Math.abs(currentTime - messageTime) / 1000; %>
+                                <% var timeAgo='' ; %>
+                                    <% if (timeDifference < 60) { %>
+                                        <% timeAgo=Math.floor(timeDifference) + ' seconds ago' ; %>
+                                            <% } else if (timeDifference < 3600) { %>
+                                                <% timeAgo=Math.floor(timeDifference / 60) + ' minutes ago' ; %>
+                                                    <% } else if (timeDifference < 86400) { %>
+                                                        <% timeAgo=Math.floor(timeDifference / 3600) + ' hours ago' ; %>
+                                                            <% } else if (timeDifference < 604800) { %>
+                                                                <% timeAgo=Math.floor(timeDifference / 86400)
+                                                                    + ' days ago' ; %>
+                                                                    <% } else { %>
+                                                                        <% timeAgo='more than a week ago' ; %>
+                                                                            <% } %>
+                                                                                <% if (messages[i].user_id==user_id) {
+                                                                                    %>
+                                                                                    <div class="my_message_wrapper">
+                                                                                        <div class="message_info">
+                                                                                            <%= messages[i].username %>
+                                                                                                (<%= timeAgo %>)
+                                                                                        </div>
+                                                                                        <p class="message your-message">
+                                                                                            <%= messages[i].text %>
+                                                                                        </p>
+                                                                                    </div>
+                                                                                    <% } else { %>
+                                                                                        <div
+                                                                                            class="other_message_wrapper">
+                                                                                            <div class="message_info">
+                                                                                                <%=messages[i].username%>
+                                                                                                    (<%= timeAgo %>)
+                                                                                            </div>
+                                                                                            <p
+                                                                                                class="message others-message">
+                                                                                                <%= messages[i].text %>
+                                                                                            </p>
+                                                                                        </div>
 
+                                                                                        <% } %>
+                                                                                            <% } %>
+            </div>
+            <!-- 
             <div id="messagebox">
                 <% for (var i=0; i < messages.length; i++) { %>
                     <% if (messages[i].user_id==user_id) { %>
@@ -28,7 +73,7 @@
                             </p>
                             <% } %>
                                 <% } %>
-            </div>
+            </div> -->
 
             <form action='/sendText' method='post'>
                 <input name='text' type='text' placeholder='Enter text...'>
@@ -36,6 +81,9 @@
             </form>
         </div>
     </div>
+    <form action='/home' method='post'>
+        <button>Go to Home</button>
+    </form>
     <form action='/logout' method='post'>
         <button>Logout</button>
     </form>

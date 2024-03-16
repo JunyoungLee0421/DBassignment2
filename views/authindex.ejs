@@ -20,15 +20,12 @@
                         <a href="chatRoom/<%=results[i].room_id%>">
                             <%= results[i].name %>
                         </a>
-                        <!-- <a href="chatRoom?name=<%=results[i].name%>">
-                            <%= results[i].name %>
-                        </a> -->
                     </td>
                     <td>
                         <%= results[i].last_sent_message_datetime %>
                     </td>
                     <td>
-                        TBD
+                        <%= unreadMessages[i].unread_message_count %>
                     </td>
                 </tr>
                 <% } %>

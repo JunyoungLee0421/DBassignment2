@@ -213,10 +213,41 @@ group by ru.user_id, ru.room_id;
 select username from user
 where username != "";
 
+#all users that doesnt not belong to the group 1. get user_id from current room. from user, get all user without those ids
+select * from room R
+join room_user RU on R.room_id = RU.room_id and R.name = "Besties"
+join user U on RU.user_id = U.user_id;   
+
+select user_id, username from user
+where user_id not in (
+	select U.user_id from room R
+	join room_user RU on R.room_id = RU.room_id and R.name = "Besties"
+	join user U on RU.user_id = U.user_id
+    );
+
+#number of unread messages in the group
+select RU.user_id, RU.room_id,  MAX(room_unread.sent_datetime) AS last_message_time,COUNT(CASE WHEN room_unread.message_id is not NULL THEN 1 ELSE NULL END) AS unread_message_count
+from  room_user as RU
+left join (
+    select  RU.room_id, M.message_id, M.sent_datetime
+    from message as M
+    join room_user as RU on M.room_user_id = RU.room_user_id
+    where M.message_id > RU.last_read_message_id
+) as room_unread on room_unread.room_id = RU.room_id
+where RU.user_id=1
+group by RU.user_id, RU.room_id;
+
+
+
+select * from room_user RU
+join room R on RU.room_id = R.room_id
+where RU.room_id;
+
 select room_id from room where name = "newRoom";
 #create new group
 insert into room (name, start_datetime) values ("new room", "2024-03-06");
 insert into room_user (user_id, room_id, last_read_message_id) values ();
+
 
 #detele & reset auto increment statements
 delete from user where user_id in (7,8,9);

@@ -163,6 +163,38 @@ async function getUsers(postData) {
     }
 }
 
+async function getNumberOfUnreadMessages(postData) {
+    let getNumberOfUnreadMessagesSQL = `
+    select RU.user_id, RU.room_id,  MAX(room_unread.sent_datetime) AS last_message_time,COUNT(CASE WHEN room_unread.message_id is not NULL THEN 1 ELSE NULL END) AS unread_message_count
+    from  room_user as RU
+    left join (
+        select  RU.room_id, M.message_id, M.sent_datetime
+        from message as M
+        join room_user as RU on M.room_user_id = RU.room_user_id
+        where M.message_id > RU.last_read_message_id
+    ) as room_unread on room_unread.room_id = RU.room_id
+    where RU.user_id = :user_id
+    group by RU.user_id, RU.room_id;
+    `;
+
+    let params = {
+        user_id: postData.user_id
+    }
+
+    try {
+        const results = await database.query(getNumberOfUnreadMessagesSQL, params);
+
+        console.log("Successfully loaded number of unread messages");
+        console.log(results[0]);
+        return results[0];
+    }
+    catch (err) {
+        console.log("Error getting number of unread messages");
+        console.log(err);
+        return false;
+    }
+}
 
 
-module.exports = { getGroups, getMessages, getMembers, getLastSentMessage, getUsers, getMembersNotInRoom };
+
+module.exports = { getGroups, getMessages, getMembers, getLastSentMessage, getUsers, getMembersNotInRoom, getNumberOfUnreadMessages };
