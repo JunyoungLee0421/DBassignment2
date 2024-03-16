@@ -85,10 +85,11 @@ app.get('/chatRoom/:room_id', async (req, res) => {
 
     console.log(members)
     if (messages && members) {
-        res.render("chatRoom", { messages: messages, members: members, user_id: userID[0].user_id })
+        res.render("chatRoom", { messages: messages, members: members, user_id: userID[0].user_id, room_id: room_id })
     }
 })
 
+//create group page
 app.get('/createGroup', async (req, res) => {
     var username = req.session.username;
     var userResults = await db_manager.getUsers({ username: username });
@@ -96,8 +97,38 @@ app.get('/createGroup', async (req, res) => {
     res.render("createGroup", { userResults: userResults })
 })
 
+//when create group got clicked
 app.post('/createGroup', (req, res) => {
     res.redirect('/createGroup');
+})
+
+//invite member page
+app.get('/inviteMember/:room_id', async (req, res) => {
+    var room_id = req.params.room_id;
+
+    var userResults = await db_manager.getMembersNotInRoom({ room_id: room_id });
+    res.render("inviteMember", { room_id: room_id, userResults: userResults })
+})
+
+//when invite button clicked on chat room
+app.post('/invite', async (req, res) => {
+    const create_room = include('database/create_room');
+
+    var room_id = req.body.room_id;
+    var selectedUsers = req.body.selectedUsers;
+
+    try {
+        console.log(room_id);
+        console.log(selectedUsers);
+        console.log(selectedUsers);
+        for (var i = 0; i < selectedUsers.length; i++) {
+            await create_room.insertUsers({ room_id: room_id, user_id: selectedUsers[i] })
+            console.log("successfully insert user into the room");
+        }
+        res.redirect('/chatRoom/' + room_id);
+    } catch (error) {
+        res.render("errorMessage", { error: "Failed to insert user." });
+    }
 })
 
 app.post('/publishGroup', async (req, res) => {
@@ -188,6 +219,7 @@ app.post('/signup', async (req, res) => {
     }
 
 });
+
 app.post('/login', async (req, res) => {
     var username = req.body.username;
     var password = req.body.password;

@@ -54,6 +54,7 @@ async function getLastSentMessage(postData) {
         return false;
     }
 }
+
 async function getMembers(postData) {
     let getMemberSQL = `
     select U.username from room R
@@ -76,6 +77,35 @@ async function getMembers(postData) {
     }
     catch (err) {
         console.log("Error getting groups");
+        console.log(err);
+        return false;
+    }
+}
+
+async function getMembersNotInRoom(postData) {
+    let getMemberSQL = `
+    select user_id, username from user
+    where user_id not in (
+        select U.user_id from room R
+        join room_user RU on R.room_id = RU.room_id and R.room_id = :room_id
+        join user U on RU.user_id = U.user_id
+        );  
+    `;
+
+    let params = {
+        //groupname: postData.groupname,
+        room_id: postData.room_id,
+    }
+
+    try {
+        const results = await database.query(getMemberSQL, params);
+
+        console.log("Successfully loaded members");
+        console.log(results[0]);
+        return results[0];
+    }
+    catch (err) {
+        console.log("Error getting members");
         console.log(err);
         return false;
     }
@@ -135,4 +165,4 @@ async function getUsers(postData) {
 
 
 
-module.exports = { getGroups, getMessages, getMembers, getLastSentMessage, getUsers };
+module.exports = { getGroups, getMessages, getMembers, getLastSentMessage, getUsers, getMembersNotInRoom };

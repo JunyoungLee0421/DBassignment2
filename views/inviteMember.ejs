@@ -1,0 +1,14 @@
+<%- include("templates/header") %>
+    Invite Member
+    <form action='/invite' method='post'>
+        <input type="hidden" name="room_id" value="<%=room_id%>">
+        <div class="checkbox-list">
+            <% userResults.forEach(user=> { %>
+                <label>
+                    <input type="checkbox" name="selectedUsers" value="<%= user.user_id %>">
+                    <%= user.username %>
+                </label><br>
+                <% }); %>
+        </div>
+        <button>Invite Members</button>
+    </form>

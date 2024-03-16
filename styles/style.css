@@ -10,12 +10,12 @@
     border: 1px solid #ccc;
     padding: 20px;
     width: 600px;
-    /* Set a maximum width if desired */
 }
 
 #messagebox {
     display: flex;
     flex-direction: column;
+    background-color: #f7f7f7;
 }
 
 .message {
@@ -23,17 +23,27 @@
     margin: 5px;
     border-radius: 5px;
     max-width: 70%;
-    /* Set a maximum width for the messages */
 }
 
 .others-message {
     background-color: #e0e0e0;
-    /* Set a background color for others' messages */
     align-self: flex-start;
 }
 
 .your-message {
     background-color: #6a8ae8;
-    /* Set a background color for your messages */
     align-self: flex-end;
+}
+
+#messageheader {
+    display: flex;
+    align-items: center;
+}
+
+#current-users {
+    margin-right: 10px;
+}
+
+form {
+    margin: 0;
 }

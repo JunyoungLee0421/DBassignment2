@@ -2,13 +2,18 @@
     <div id="chatroom">
         <div id="chatbox">
             <h2>Chat room</h2>
-            <div>
-                <p>current users in the group : </p>
-                <% for (var i=0; i < members.length; i++) { %>
-                    <p>
-                        <%= members[i].username %>
-                    </p>
-                    <% } %>
+            <div id="messageheader">
+                <p id="current-users">Current users in the group:
+                    <% for (var i=0; i < members.length; i++) { %>
+                        <span>
+                            <%= members[i].username %>
+                        </span>
+                        <% } %>
+                </p>
+                <a href="/inviteMember/<%=room_id%>"><button>Invite</button></a>
+                <!-- <form action='/invite' method='post'>
+                    <button>Invite</button>
+                </form> -->
             </div>
 
             <div id="messagebox">
