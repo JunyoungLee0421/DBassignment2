@@ -7,10 +7,11 @@
 
 ### works but needs improvements ###
 5. # of unread messages -> works, but maybe polish a bit 좀 병신같이씀
+6. emojis -> fix css
 
 ### needs to do ###
 1. password validation -> do it at the end
-6. emojis
+
 7. chatroom에 없으면 못들어가게
 11. updated last read message
 

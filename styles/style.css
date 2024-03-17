@@ -71,3 +71,35 @@
 form {
     margin: 0;
 }
+
+.reaction_arranger {
+    align-items: flex-end;
+}
+
+.reaction_container {
+    display: flex;
+}
+
+.existingReactions {
+    width: 30px;
+    height: 30px;
+    margin-right: 5px;
+}
+
+.emoji-toggle-btn {
+    width: 30px;
+    height: 30px;
+    margin-right: 5px;
+}
+
+.emojiButton {
+    width: 30px;
+    height: 30px;
+    margin-right: 5px;
+}
+
+.emojiButton img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}

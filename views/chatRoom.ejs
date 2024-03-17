@@ -27,37 +27,44 @@
                                 <p class="message your-message">
                                     <%= messages[i].text %>
                                 </p>
+                                <div class="reaction_arranger">
+                                    <div class="reaction_container">
+                                        <% if (messages[i].emojis.length> 0) { %>
+                                            <% messages[i].emojis.forEach(emoji=> { %>
+                                                <img src="/<%= emoji.image %>" alt="<%= emoji.name %>"
+                                                    class="existingReactions">
+                                                <p>
+                                                    <%= emoji.emoji_count %>
+                                                </p>
+                                                <% }); %>
+                                                    <% } %>
+                                                        <button class="emoji-toggle-btn"
+                                                            onclick="openReactions('<%= messages[i].message_id %>')">+</button>
+                                                        <div class="reactionList" style="display: none;"
+                                                            id="reactionList<%= messages[i].message_id %>">
+                                                            <form action="/addEmoji" method="POST">
+                                                                <input type="hidden" name="room_id"
+                                                                    value="<%=room_id%>">
+                                                                <input type="hidden" name="message_id"
+                                                                    value="<%= messages[i].message_id %>">
+                                                                <button type="submit" name="emoji_id" value="2"
+                                                                    class="emojiButton"><img src="/100.png"
+                                                                        alt="100"></button>
+                                                                <button type="submit" name="emoji_id" value="3"
+                                                                    class="emojiButton"><img src="/happy.png"
+                                                                        alt="happy"></button>
+                                                                <button type=" submit" name="emoji_id" value="1"
+                                                                    class="emojiButton"><img src="/thumbsup.png"
+                                                                        alt="thumbsup"></button>
+                                                            </form>
+                                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <% if (messages[i].emojis.length> 0) { %>
-                                    <% messages[i].emojis.forEach(emoji=> { %>
-                                        <img src="/<%= emoji.image %>" alt="<%= emoji.name %>"
-                                            class="existingReactions">
-                                        <p>
-                                            <%= emoji.emoji_count %>
-                                        </p>
-                                        <% }); %>
-                                            <% } %>
-                                                <button class="emoji-toggle-btn"
-                                                    onclick="openReactions('<%= messages[i].message_id %>')">+</button>
-                                                <div class="reactionList" style="display: none;"
-                                                    id="reactionForm<%= messages[i].message_id %>">
-                                                    <form action="/addEmoji" method="POST">
-                                                        <input type="hidden" name="room_id" value="<%=room_id%>">
-                                                        <input type="hidden" name="message_id"
-                                                            value="<%= messages[i].message_id %>">
-                                                        <button type="submit" name="emoji_id" value="2"><img
-                                                                src="/100.png" alt="100"></button>
-                                                        <button type="submit" name="emoji_id" value="3"><img
-                                                                src="/happy.png" alt="happy"></button>
-                                                        <button type="submit" name="emoji_id" value="1"><img
-                                                                src="/thumbsup.png" alt="thumbsup"></button>
-                                                    </form>
-                                                </div>
-                            </div>
+
                         </div>
                         <% } else { %>
-                            <div class="other_message_wrapper">
+                            <div class=" other_message_wrapper">
                                 <div class="other_message_column">
                                     <div class="message_info">
                                         <%=messages[i].username%>
@@ -66,25 +73,41 @@
                                     <p class="message others-message">
                                         <%= messages[i].text %>
                                     </p>
-                                </div>
-                                <div>
-                                    <button class="emoji-toggle-btn"
-                                        onclick="openReactions('<%= messages[i].message_id %>')">+</button>
-                                    <div class="reactionList" style="display: none;"
-                                        id="reactionForm<%= messages[i].message_id %>">
-                                        <form action="/addEmoji" method="POST">
-                                            <input type="hidden" name="room_id" value="<%=room_id%>">
-                                            <input type="hidden" name="message_id"
-                                                value="<%= messages[i].message_id %>">
-                                            <button type="submit" name="emoji_id" value="2"><img src="/100.png"
-                                                    alt="100"></button>
-                                            <button type="submit" name="emoji_id" value="3"><img src="/happy.png"
-                                                    alt="happy"></button>
-                                            <button type="submit" name="emoji_id" value="1"><img src="/thumbsup.png"
-                                                    alt="thumbsup"></button>
-                                        </form>
+                                    <div class="reaction_arranger">
+                                        <div class="reaction_container">
+                                            <% if (messages[i].emojis.length> 0) { %>
+                                                <% messages[i].emojis.forEach(emoji=> { %>
+                                                    <img src="/<%= emoji.image %>" alt="<%= emoji.name %>"
+                                                        class="existingReactions">
+                                                    <p>
+                                                        <%= emoji.emoji_count %>
+                                                    </p>
+                                                    <% }); %>
+                                                        <% } %>
+                                                            <button class="emoji-toggle-btn"
+                                                                onclick="openReactions('<%= messages[i].message_id %>')">+</button>
+                                                            <div class="reactionList" style="display: none;"
+                                                                id="reactionList<%= messages[i].message_id %>">
+                                                                <form action="/addEmoji" method="POST">
+                                                                    <input type="hidden" name="room_id"
+                                                                        value="<%=room_id%>">
+                                                                    <input type="hidden" name="message_id"
+                                                                        value="<%= messages[i].message_id %>">
+                                                                    <button type="submit" name="emoji_id" value="2"
+                                                                        class="emojiButton"><img src="/100.png"
+                                                                            alt="100"></button>
+                                                                    <button type="submit" name="emoji_id" value="3"
+                                                                        class="emojiButton"><img src="/happy.png"
+                                                                            alt="happy"></button>
+                                                                    <button type=" submit" name="emoji_id" value="1"
+                                                                        class="emojiButton"><img src="/thumbsup.png"
+                                                                            alt="thumbsup"></button>
+                                                                </form>
+                                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+
                             </div>
 
                             <% } %>
@@ -107,7 +130,7 @@
     <%- include("templates/footer") %>
         <script>
             function openReactions(message_id) {
-                var form = document.getElementById("reactionForm" + message_id);
+                var form = document.getElementById("reactionList" + message_id);
                 form.style.display = form.style.display === "none" ? "block" : "none";
             }
         </script>
