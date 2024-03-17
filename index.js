@@ -93,6 +93,8 @@ app.get('/authindex', async (req, res) => {
     }
 })
 
+app.use('/chatRoom/:room_id', inviteValidation);
+
 /**chat room by room id */
 app.get('/chatRoom/:room_id', async (req, res) => {
     //const create_room = include('database/create_room');
@@ -139,6 +141,30 @@ app.get('/chatRoom/:room_id', async (req, res) => {
         res.render("chatRoom", { messages: messages, members: members, user_id: userID[0].user_id, room_id: room_id })
     }
 })
+
+/** function to check if user is in the room */
+async function isInvited(req) {
+    var room_id = req.params.room_id;
+    var username = req.session.username;
+    var result = await db_manager.checkUser({
+        username: username,
+        room_id: room_id,
+    });
+    if (result[0] == undefined) {
+        return false;
+    }
+    return true;
+}
+
+async function inviteValidation(req, res, next) {
+    var result = await isInvited(req);
+    if (result == false) {
+        res.status(400);
+        res.render("400");
+    } else {
+        next();
+    }
+}
 
 /**post method for adding emoji */
 app.post('/addEmoji', async (req, res) => {

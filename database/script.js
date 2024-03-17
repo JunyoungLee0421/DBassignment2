@@ -319,6 +319,60 @@ async function addEmoji(postData) {
     }
 }
 
+async function getEmojis(postData) {
+    let getEmojisSQL = `
+    SELECT count(E.name) as emoji_count, E.name, E.image
+    FROM message_emoji_user MEU
+    JOIN emojis E ON MEU.emoji_id = E.emoji_id
+    WHERE message_id = :message_id
+    GROUP BY E.name, E.image;
+    `;
+
+    let params = {
+        message_id: postData.message_id
+    }
+
+    try {
+        const results = await database.query(getEmojisSQL, params);
+
+        console.log("Successfully got emojis");
+        console.log(results[0]);
+        return results[0];
+    }
+    catch (err) {
+        console.log("Error getting emojis");
+        console.log(err);
+        return false;
+    }
+}
+
+async function checkUser(postData) {
+    let checkUserSQL = `
+    SELECT U.user_id 
+    FROM room_user RU
+    JOIN user U ON U.user_id = RU.user_id
+    WHERE room_id = :room_id and username = :username;
+    `;
+
+    let params = {
+        room_id: postData.room_id,
+        username: postData.username
+    }
+
+    try {
+        const results = await database.query(checkUserSQL, params);
+
+        console.log("Successfully loaded user");
+        console.log(results[0]);
+        return results[0];
+    }
+    catch (err) {
+        console.log("Error loading user");
+        console.log(err);
+        return false;
+    }
+}
+
 module.exports = {
     getGroups,
     getMessages,
@@ -331,5 +385,6 @@ module.exports = {
     sendMessage,
     getEmojis,
     addEmoji,
-    updateLastReadMessage
+    updateLastReadMessage,
+    checkUser
 };
