@@ -10,6 +10,7 @@ async function createRoom(postData) {
     }
 
     try {
+        await database.query("SET time_zone = '-07:00';");
         const results = await database.query(createRoomSQL, params);
 
         console.log("Successfully created room");

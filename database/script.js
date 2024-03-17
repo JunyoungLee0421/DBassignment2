@@ -220,8 +220,6 @@ async function getRoomUserId(postData) {
     }
 }
 
-
-
 async function sendMessage(postData) {
     let sendMessageSQL = `
     insert into message (room_user_id, text) values (:room_user_id, :text);
@@ -233,6 +231,7 @@ async function sendMessage(postData) {
     }
 
     try {
+        await database.query("SET time_zone = '-07:00';");
         const results = await database.query(sendMessageSQL, params);
 
         console.log("Successfully sent message");
@@ -246,6 +245,79 @@ async function sendMessage(postData) {
     }
 }
 
+async function updateLastReadMessage(postData) {
+    let updateLastReadMessageSQL = `
+    `;
+
+    let params = {
+        room_user_id: postData.room_user_id
+    }
+
+    try {
+        const results = await database.query(updateLastReadMessageSQL, params);
+
+        console.log("Successfully sent message");
+        console.log(results[0]);
+        return results[0];
+    }
+    catch (err) {
+        console.log("Error sending message");
+        console.log(err);
+        return false;
+    }
+}
+
+async function getEmojis(postData) {
+    let getEmojisSQL = `
+    SELECT count(E.name) as emoji_count, E.name, E.image
+    FROM message_emoji_user MEU
+    JOIN emojis E ON MEU.emoji_id = E.emoji_id
+    WHERE message_id = :message_id
+    GROUP BY E.name, E.image;
+    `;
+
+    let params = {
+        message_id: postData.message_id
+    }
+
+    try {
+        const results = await database.query(getEmojisSQL, params);
+
+        console.log("Successfully sent message");
+        console.log(results[0]);
+        return results[0];
+    }
+    catch (err) {
+        console.log("Error sending message");
+        console.log(err);
+        return false;
+    }
+}
+
+async function addEmoji(postData) {
+    let updateEmojiSQL = `
+    insert into message_emoji_user (message_id, emoji_id, user_id) values (:message_id, :emoji_id, :user_id);
+    `;
+
+    let params = {
+        message_id: postData.message_id,
+        emoji_id: postData.emoji_id,
+        user_id: postData.user_id
+    }
+
+    try {
+        const results = await database.query(updateEmojiSQL, params);
+
+        console.log("Successfully sent message");
+        console.log(results[0]);
+        return results[0];
+    }
+    catch (err) {
+        console.log("Error sending message");
+        console.log(err);
+        return false;
+    }
+}
 
 module.exports = {
     getGroups,
@@ -256,5 +328,8 @@ module.exports = {
     getMembersNotInRoom,
     getNumberOfUnreadMessages,
     getRoomUserId,
-    sendMessage
+    sendMessage,
+    getEmojis,
+    addEmoji,
+    updateLastReadMessage
 };

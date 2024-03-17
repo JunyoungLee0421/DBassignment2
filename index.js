@@ -81,7 +81,7 @@ app.get('/authindex', async (req, res) => {
                 } else if (diffInDays <= 6) {
                     results[i].last_sent_message_datetime = sentDateTime.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }) + ' (' + diffInDays + ' days ago)';
                 } else {
-                    results[i].last_sent_message_datetime = sentDateTime.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }) + '(more than a week ago)';
+                    results[i].last_sent_message_datetime = sentDateTime.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }) + ' (more than a week ago)';
                 }
             }
         }
@@ -105,8 +105,31 @@ app.get('/chatRoom/:room_id', async (req, res) => {
 
     console.log(members)
     if (messages && members) {
+        messages.forEach((message, index) => {
+            var messageTime = new Date(message.sent_datetime);
+            var currentTime = new Date();
+            var timeDifference = Math.abs(currentTime - messageTime) / 1000;
+            var timeAgo = '';
+            if (timeDifference < 60) {
+                timeAgo = Math.floor(timeDifference) + ' seconds ago';
+            } else if (timeDifference < 3600) {
+                timeAgo = Math.floor(timeDifference / 60) + ' minutes ago';
+            } else if (timeDifference < 86400) {
+                timeAgo = Math.floor(timeDifference / 3600) + ' hours ago';
+            } else if (timeDifference < 604800) {
+                timeAgo = Math.floor(timeDifference / 86400) + ' days ago';
+            } else {
+                timeAgo = 'more than a week ago';
+            }
+            messages[index].timeAgo = timeAgo;
+        });
         res.render("chatRoom", { messages: messages, members: members, user_id: userID[0].user_id, room_id: room_id })
     }
+})
+
+/**post method for adding emoji */
+app.post('/addEmoji', async (req, res) => {
+
 })
 
 /**create group page */

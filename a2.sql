@@ -258,6 +258,17 @@ select * from room_user;
 
 insert into message (room_user_id, text) values (0, "");
 
+#update last_read_message
+
+#get emoji
+SELECT count(E.name) as emoji_count, E.name, E.image
+FROM message_emoji_user MEU
+JOIN emojis E ON MEU.emoji_id = E.emoji_id
+WHERE message_id = 1
+GROUP BY E.name, E.image;
+
+#add emoji
+insert into message_emoji_user (message_id, emoji_id, user_id) values ();
 
 #detele & reset auto increment statements
 delete from user where user_id in (7,8,9);
@@ -269,5 +280,6 @@ ALTER TABLE room AUTO_INCREMENT = 9;
 
 delete from message where message_id in (30, 31, 32);
 ALTER TABLE message AUTO_INCREMENT = 30;
+
 
 
