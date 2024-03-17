@@ -19,11 +19,24 @@
 }
 
 .my_message_wrapper {
+    justify-content: flex-end;
     align-self: flex-end;
+}
+
+.my_message_column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 }
 
 .other_message_wrapper {
     align-self: flex-start;
+}
+
+.other_message_column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .message_info {
@@ -40,13 +53,10 @@
 
 .others-message {
     background-color: #e0e0e0;
-    align-self: flex-start;
-    align-content: end;
 }
 
 .your-message {
     background-color: #6a8ae8;
-    align-self: flex-end;
 }
 
 #messageheader {

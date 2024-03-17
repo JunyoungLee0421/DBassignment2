@@ -50,6 +50,7 @@ app.use(session({
 }
 ));
 
+/**index page. if there is session, go to auth index. otherwise go to index */
 app.get('/', (req, res) => {
     if (req.session.authenticated) {
         res.redirect("authindex");
@@ -58,6 +59,7 @@ app.get('/', (req, res) => {
     }
 });
 
+/**auth index page, display joined rooms and their information */
 app.get('/authindex', async (req, res) => {
     var username = req.session.username;
     var results = await db_manager.getGroups({ user: username });
@@ -91,6 +93,7 @@ app.get('/authindex', async (req, res) => {
     }
 })
 
+/**chat room by room id */
 app.get('/chatRoom/:room_id', async (req, res) => {
     const create_room = include('database/create_room');
     var room_id = req.params.room_id;
@@ -106,7 +109,7 @@ app.get('/chatRoom/:room_id', async (req, res) => {
     }
 })
 
-//create group page
+/**create group page */
 app.get('/createGroup', async (req, res) => {
     var username = req.session.username;
     var userResults = await db_manager.getUsers({ username: username });
@@ -114,42 +117,14 @@ app.get('/createGroup', async (req, res) => {
     res.render("createGroup", { userResults: userResults })
 })
 
-//when create group got clicked
+/**post method for create group */
 app.post('/createGroup', (req, res) => {
     res.redirect('/createGroup');
 })
 
-//invite member page
-app.get('/inviteMember/:room_id', async (req, res) => {
-    var room_id = req.params.room_id;
-
-    var userResults = await db_manager.getMembersNotInRoom({ room_id: room_id });
-    res.render("inviteMember", { room_id: room_id, userResults: userResults })
-})
-
-//when invite button clicked on chat room
-app.post('/invite', async (req, res) => {
-    const create_room = include('database/create_room');
-
-    var room_id = req.body.room_id;
-    var selectedUsers = req.body.selectedUsers;
-
-    try {
-        console.log(room_id);
-        console.log(selectedUsers);
-        console.log(selectedUsers);
-        for (var i = 0; i < selectedUsers.length; i++) {
-            await create_room.insertUsers({ room_id: room_id, user_id: selectedUsers[i] })
-            console.log("successfully insert user into the room");
-        }
-        res.redirect('/chatRoom/' + room_id);
-    } catch (error) {
-        res.render("errorMessage", { error: "Failed to insert user." });
-    }
-})
-
+/**post method for publishing (creating) group at createGroup page */
 app.post('/publishGroup', async (req, res) => {
-    const create_room = include('database/create_room');
+    //const create_room = include('database/create_room');
 
     var roomname = req.body.roomname;
     var selectedUsers = req.body.selectedUsers;
@@ -175,6 +150,70 @@ app.post('/publishGroup', async (req, res) => {
     }
 })
 
+/**invite member page by room id */
+app.get('/inviteMember/:room_id', async (req, res) => {
+    var room_id = req.params.room_id;
+
+    var userResults = await db_manager.getMembersNotInRoom({ room_id: room_id });
+    res.render("inviteMember", { room_id: room_id, userResults: userResults })
+})
+
+/**post method for inviting users */
+app.post('/invite', async (req, res) => {
+    //const create_room = include('database/create_room');
+    var room_id = req.body.room_id;
+    var selectedUsers = req.body.selectedUsers;
+
+    try {
+        console.log(room_id);
+        console.log(selectedUsers);
+        console.log(selectedUsers);
+        for (var i = 0; i < selectedUsers.length; i++) {
+            await create_room.insertUsers({ room_id: room_id, user_id: selectedUsers[i] })
+            console.log("successfully insert user into the room");
+        }
+        res.redirect('/chatRoom/' + room_id);
+    } catch (error) {
+        res.render("errorMessage", { error: "Failed to insert user." });
+    }
+})
+
+/**post method for sending message to the chatroom */
+app.post('/sendText', async (req, res) => {
+    var username = req.session.username;
+    var room_id = req.body.room_id;
+    var text = req.body.text;
+    var userID = await create_room.getUserId({ username: username });
+
+    var room_user_id = await db_manager.getRoomUserId({ room_id: room_id, user_id: userID[0].user_id });
+
+    if (room_user_id) {
+        console.log(room_user_id);
+        try {
+            var success = await db_manager.sendMessage({ room_user_id: room_user_id[0].room_user_id, text: text });
+            if (success) {
+                res.redirect('/chatRoom/' + room_id);
+            } else {
+                res.render("errorMessage", { error: "Failed to send message." });
+            }
+        } catch {
+            res.render("errorMessage", { error: "Failed to send message." });
+        }
+    }
+})
+
+/**post method for home */
+app.post('/home', async (req, res) => {
+    res.redirect('/');
+})
+
+/**post method for logout */
+app.post('/logout', async (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
+})
+
+/**instructor's codes */
 app.get('/createTables', async (req, res) => {
     const create_tables = include('database/create_tables');
 
@@ -278,15 +317,6 @@ app.post('/login', async (req, res) => {
     //user and password combination not found
     res.redirect("/login");
 });
-
-app.post('/home', async (req, res) => {
-    res.redirect('/');
-})
-
-app.post('/logout', async (req, res) => {
-    req.session.destroy();
-    res.redirect('/');
-})
 
 function isValidSession(req) {
     if (req.session.authenticated) {

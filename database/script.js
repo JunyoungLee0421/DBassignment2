@@ -195,6 +195,66 @@ async function getNumberOfUnreadMessages(postData) {
     }
 }
 
+async function getRoomUserId(postData) {
+    let getRoomUserIdSQL = `
+    select room_user_id from room_user 
+    where user_id = :user_id and room_id = :room_id;
+    `;
+
+    let params = {
+        user_id: postData.user_id,
+        room_id: postData.room_id
+    }
+
+    try {
+        const results = await database.query(getRoomUserIdSQL, params);
+
+        console.log("Successfully got room user id");
+        console.log(results[0]);
+        return results[0];
+    }
+    catch (err) {
+        console.log("Error getting room user id");
+        console.log(err);
+        return false;
+    }
+}
 
 
-module.exports = { getGroups, getMessages, getMembers, getLastSentMessage, getUsers, getMembersNotInRoom, getNumberOfUnreadMessages };
+
+async function sendMessage(postData) {
+    let sendMessageSQL = `
+    insert into message (room_user_id, text) values (:room_user_id, :text);
+    `;
+
+    let params = {
+        room_user_id: postData.room_user_id,
+        text: postData.text
+    }
+
+    try {
+        const results = await database.query(sendMessageSQL, params);
+
+        console.log("Successfully sent message");
+        console.log(results[0]);
+        return results[0];
+    }
+    catch (err) {
+        console.log("Error sending message");
+        console.log(err);
+        return false;
+    }
+}
+
+
+module.exports = {
+    getGroups,
+    getMessages,
+    getMembers,
+    getLastSentMessage,
+    getUsers,
+    getMembersNotInRoom,
+    getNumberOfUnreadMessages,
+    getRoomUserId,
+    sendMessage
+};

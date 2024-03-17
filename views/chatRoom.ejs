@@ -36,48 +36,44 @@
                                                                                 <% if (messages[i].user_id==user_id) {
                                                                                     %>
                                                                                     <div class="my_message_wrapper">
-                                                                                        <div class="message_info">
-                                                                                            <%= messages[i].username %>
-                                                                                                (<%= timeAgo %>)
+                                                                                        <div class="my_message_column">
+                                                                                            <div class="message_info">
+                                                                                                <%= messages[i].username
+                                                                                                    %>
+                                                                                                    (<%= timeAgo %>)
+                                                                                            </div>
+                                                                                            <p
+                                                                                                class="message your-message">
+                                                                                                <%= messages[i].text %>
+                                                                                            </p>
                                                                                         </div>
-                                                                                        <p class="message your-message">
-                                                                                            <%= messages[i].text %>
-                                                                                        </p>
                                                                                     </div>
                                                                                     <% } else { %>
                                                                                         <div
                                                                                             class="other_message_wrapper">
-                                                                                            <div class="message_info">
-                                                                                                <%=messages[i].username%>
-                                                                                                    (<%= timeAgo %>)
+                                                                                            <div
+                                                                                                class="other_message_column">
+                                                                                                <div
+                                                                                                    class="message_info">
+                                                                                                    <%=messages[i].username%>
+                                                                                                        (<%= timeAgo %>)
+                                                                                                </div>
+                                                                                                <p
+                                                                                                    class="message others-message">
+                                                                                                    <%= messages[i].text
+                                                                                                        %>
+                                                                                                </p>
                                                                                             </div>
-                                                                                            <p
-                                                                                                class="message others-message">
-                                                                                                <%= messages[i].text %>
-                                                                                            </p>
                                                                                         </div>
 
                                                                                         <% } %>
                                                                                             <% } %>
             </div>
-            <!-- 
-            <div id="messagebox">
-                <% for (var i=0; i < messages.length; i++) { %>
-                    <% if (messages[i].user_id==user_id) { %>
-                        <p class="message your-message">
-                            <%= messages[i].text %>
-                        </p>
-                        <% } else { %>
-                            <p class="message others-message">
-                                <%= messages[i].text %>
-                            </p>
-                            <% } %>
-                                <% } %>
-            </div> -->
 
             <form action='/sendText' method='post'>
+                <input type="hidden" name="room_id" value="<%=room_id%>">
                 <input name='text' type='text' placeholder='Enter text...'>
-                <button>Submit</button>
+                <button>Send Message</button>
             </form>
         </div>
     </div>

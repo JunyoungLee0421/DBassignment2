@@ -248,6 +248,16 @@ select room_id from room where name = "newRoom";
 insert into room (name, start_datetime) values ("new room", "2024-03-06");
 insert into room_user (user_id, room_id, last_read_message_id) values ();
 
+#get room user id
+select room_user_id from room_user 
+where user_id = 1 and room_id = 1;
+
+#insert new message
+select * from message;
+select * from room_user;
+
+insert into message (room_user_id, text) values (0, "");
+
 
 #detele & reset auto increment statements
 delete from user where user_id in (7,8,9);
@@ -256,5 +266,8 @@ delete from room_user where room_user_id in (32, 33, 34, 35);
 ALTER TABLE room_user AUTO_INCREMENT = 32;
 delete from room where room_id in (9, 10);
 ALTER TABLE room AUTO_INCREMENT = 9;
+
+delete from message where message_id in (30, 31, 32);
+ALTER TABLE message AUTO_INCREMENT = 30;
 
 

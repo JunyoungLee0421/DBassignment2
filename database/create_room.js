@@ -93,4 +93,10 @@ async function insertUsers(postData) {
     }
 }
 
-module.exports = { createRoom, insertUsers, getRoomId, getUserId };
+
+module.exports = {
+    createRoom,
+    insertUsers,
+    getRoomId,
+    getUserId
+};
