@@ -95,21 +95,24 @@ app.get('/authindex', async (req, res) => {
 
 /**chat room by room id */
 app.get('/chatRoom/:room_id', async (req, res) => {
-    const create_room = include('database/create_room');
+    //const create_room = include('database/create_room');
     var room_id = req.params.room_id;
     //var groupname = req.query.name;
     var username = req.session.username;
     var userID = await create_room.getUserId({ username: username });
     var messages = await db_manager.getMessages({ room_id: room_id });
     var members = await db_manager.getMembers({ room_id: room_id, username: username });
+    //var emojis = await db_manager.getEmojis({ message_id: message_id });
 
     console.log(members)
     if (messages && members) {
-        messages.forEach((message, index) => {
-            var messageTime = new Date(message.sent_datetime);
-            var currentTime = new Date();
-            var timeDifference = Math.abs(currentTime - messageTime) / 1000;
-            var timeAgo = '';
+        for (let i = 0; i < messages.length; i++) {
+            const message = messages[i];
+            const messageTime = new Date(message.sent_datetime);
+            const currentTime = new Date();
+            const timeDifference = Math.abs(currentTime - messageTime) / 1000;
+            let timeAgo = '';
+
             if (timeDifference < 60) {
                 timeAgo = Math.floor(timeDifference) + ' seconds ago';
             } else if (timeDifference < 3600) {
@@ -121,15 +124,36 @@ app.get('/chatRoom/:room_id', async (req, res) => {
             } else {
                 timeAgo = 'more than a week ago';
             }
-            messages[index].timeAgo = timeAgo;
-        });
+
+            messages[i].timeAgo = timeAgo;
+
+            console.log(message.message_id);
+            const emojis = await db_manager.getEmojis({ message_id: message.message_id });
+            messages[i].emojis = emojis;
+        }
+        console.log(messages);
+
+        for (let i = 0; i < messages.length; i++) {
+            console.log(messages[i].emojis);
+        }
         res.render("chatRoom", { messages: messages, members: members, user_id: userID[0].user_id, room_id: room_id })
     }
 })
 
 /**post method for adding emoji */
 app.post('/addEmoji', async (req, res) => {
+    var username = req.session.username;
+    var userID = await create_room.getUserId({ username: username });
+    var room_id = req.body.room_id;
+    var emoji_id = req.body.emoji_id;
+    var message_id = req.body.message_id;
 
+    var success = await db_manager.addEmoji({ message_id: message_id, emoji_id: emoji_id, user_id: userID[0].user_id })
+    if (success) {
+        res.redirect('/chatRoom/' + room_id);
+    } else {
+        res.render("errorMessage", { error: "Failed to create user." });
+    }
 })
 
 /**create group page */

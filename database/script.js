@@ -283,12 +283,12 @@ async function getEmojis(postData) {
     try {
         const results = await database.query(getEmojisSQL, params);
 
-        console.log("Successfully sent message");
+        console.log("Successfully got emojis");
         console.log(results[0]);
         return results[0];
     }
     catch (err) {
-        console.log("Error sending message");
+        console.log("Error getting emojis");
         console.log(err);
         return false;
     }
@@ -308,12 +308,12 @@ async function addEmoji(postData) {
     try {
         const results = await database.query(updateEmojiSQL, params);
 
-        console.log("Successfully sent message");
+        console.log("Successfully added emoji");
         console.log(results[0]);
         return results[0];
     }
     catch (err) {
-        console.log("Error sending message");
+        console.log("Error adding emoji");
         console.log(err);
         return false;
     }
