@@ -103,3 +103,25 @@ form {
     height: 100%;
     object-fit: contain;
 }
+
+.unreadLine {
+    display: flex;
+    align-items: center;
+    --text-divider-gap: 1rem;
+}
+
+.unreadLine::before,
+.unreadLine::after {
+    content: "";
+    height: 1px;
+    background-color: silver;
+    flex-grow: 1;
+}
+
+.unreadLine::before {
+    margin-right: var(--text-divider-gap);
+}
+
+.unreadLine::after {
+    margin-left: var(--text-divider-gap);
+}

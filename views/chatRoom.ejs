@@ -111,7 +111,10 @@
                             </div>
 
                             <% } %>
-                                <% } %>
+                                <% if (last_read_message_id==messages[i].message_id && i !==messages.length - 1) { %>
+                                    <div class="unreadLine">Unread</div>
+                                    <% } %>
+                                        <% } %>
             </div>
 
             <form action='/sendText' method='post'>
@@ -122,6 +125,7 @@
         </div>
     </div>
     <form action='/home' method='post'>
+        <input type="hidden" name="room_id" value="<%=room_id%>">
         <button>Go to Home</button>
     </form>
     <form action='/logout' method='post'>

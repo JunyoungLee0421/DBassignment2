@@ -264,11 +264,19 @@ insert into message (room_user_id, text) values (0, "");
 SELECT count(E.name) as emoji_count, E.name, E.image
 FROM message_emoji_user MEU
 JOIN emojis E ON MEU.emoji_id = E.emoji_id
-WHERE message_id = 1
+WHERE message_id = 23
 GROUP BY E.name, E.image;
 
 #add emoji
+select * from emojis;
+
 insert into message_emoji_user (message_id, emoji_id, user_id) values ();
+
+#check if user exist in the room
+SELECT U.user_id 
+FROM room_user RU
+JOIN user U ON U.user_id = RU.user_id
+WHERE room_id = 2 and username = "tim";
 
 #detele & reset auto increment statements
 delete from user where user_id in (7,8,9);

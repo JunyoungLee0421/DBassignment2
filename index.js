@@ -66,6 +66,7 @@ app.get('/authindex', async (req, res) => {
 
     if (results) { //if there is results
         for (var i = 0; i < results.length; i++) {
+            //get last message date
             var lastDate = await db_manager.getLastSentMessage({ groupname: results[i].name });
             if (lastDate[0] == undefined) {
                 results[i].last_sent_message_datetime = "NO MESSAGE YET";
@@ -84,12 +85,19 @@ app.get('/authindex', async (req, res) => {
                     results[i].last_sent_message_datetime = sentDateTime.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }) + ' (more than a week ago)';
                 }
             }
-        }
-        //get number of unread messages
-        var userID = await create_room.getUserId({ username: username });
-        var unreadMessages = await db_manager.getNumberOfUnreadMessages({ user_id: userID[0].user_id });
+            //get number of unread messages
+            var roomID = await create_room.getRoomId({ roomname: results[i].name });
+            var userID = await create_room.getUserId({ username: username });
+            var room_user_id = await db_manager.getRoomUserId({ room_id: roomID[0].room_id, user_id: userID[0].user_id });
+            var unreadMessagesCount = await db_manager.getNumberOfUnreadMessages({ room_id: roomID[0].room_id, room_user_id: room_user_id[0].room_user_id });
+            if (unreadMessagesCount == undefined) {
+                console.log("error getting number of unread messages")
+            } else {
+                results[i].unread_message_count = unreadMessagesCount[0].unread_message_count;
+            }
 
-        res.render("authindex", { name: username, results: results, unreadMessages: unreadMessages })
+        }
+        res.render("authindex", { name: username, results: results })
     }
 })
 
@@ -104,9 +112,9 @@ app.get('/chatRoom/:room_id', async (req, res) => {
     var userID = await create_room.getUserId({ username: username });
     var messages = await db_manager.getMessages({ room_id: room_id });
     var members = await db_manager.getMembers({ room_id: room_id, username: username });
-    //var emojis = await db_manager.getEmojis({ message_id: message_id });
+    var last_read_message_id = await db_manager.getLastReadMessageId({ room_id: room_id, user_id: userID[0].user_id })
 
-    console.log(members)
+    console.log(last_read_message_id)
     if (messages && members) {
         for (let i = 0; i < messages.length; i++) {
             const message = messages[i];
@@ -138,7 +146,7 @@ app.get('/chatRoom/:room_id', async (req, res) => {
         for (let i = 0; i < messages.length; i++) {
             console.log(messages[i].emojis);
         }
-        res.render("chatRoom", { messages: messages, members: members, user_id: userID[0].user_id, room_id: room_id })
+        res.render("chatRoom", { messages: messages, members: members, user_id: userID[0].user_id, room_id: room_id, last_read_message_id: last_read_message_id[0].last_read_message_id })
     }
 })
 
@@ -146,8 +154,9 @@ app.get('/chatRoom/:room_id', async (req, res) => {
 async function isInvited(req) {
     var room_id = req.params.room_id;
     var username = req.session.username;
+    var userID = await create_room.getUserId({ username: username });
     var result = await db_manager.checkUser({
-        username: username,
+        user_id: userID[0].user_id,
         room_id: room_id,
     });
     if (result[0] == undefined) {
@@ -277,7 +286,18 @@ app.post('/sendText', async (req, res) => {
 
 /**post method for home */
 app.post('/home', async (req, res) => {
-    res.redirect('/');
+    var username = req.session.username;
+    var room_id = req.body.room_id;
+    var userID = await create_room.getUserId({ username: username });
+    var success = await db_manager.updateLastReadMessage({ room_id: room_id, user_id: userID[0].user_id });
+
+    if (success) {
+        console.log("updated last read message successfully");
+        res.redirect('/');
+    } else {
+        res.render("errorMessage", { error: "Failed to update lst read message successfully." });
+    }
+
 })
 
 /**post method for logout */

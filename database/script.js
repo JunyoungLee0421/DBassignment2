@@ -164,21 +164,41 @@ async function getUsers(postData) {
 }
 
 async function getNumberOfUnreadMessages(postData) {
+    // let getNumberOfUnreadMessagesSQL = `
+    // select RU.user_id, RU.room_id,  MAX(room_unread.sent_datetime) AS last_message_time,COUNT(CASE WHEN room_unread.message_id is not NULL THEN 1 ELSE NULL END) AS unread_message_count
+    // from  room_user as RU
+    // left join (
+    //     select  RU.room_id, M.message_id, M.sent_datetime
+    //     from message as M
+    //     join room_user as RU on M.room_user_id = RU.room_user_id
+    //     where M.message_id > RU.last_read_message_id
+    // ) as room_unread on room_unread.room_id = RU.room_id
+    // where RU.user_id = :user_id
+    // group by RU.user_id, RU.room_id;
+    // `;
+
     let getNumberOfUnreadMessagesSQL = `
-    select RU.user_id, RU.room_id,  MAX(room_unread.sent_datetime) AS last_message_time,COUNT(CASE WHEN room_unread.message_id is not NULL THEN 1 ELSE NULL END) AS unread_message_count
-    from  room_user as RU
-    left join (
-        select  RU.room_id, M.message_id, M.sent_datetime
-        from message as M
-        join room_user as RU on M.room_user_id = RU.room_user_id
-        where M.message_id > RU.last_read_message_id
-    ) as room_unread on room_unread.room_id = RU.room_id
-    where RU.user_id = :user_id
-    group by RU.user_id, RU.room_id;
+    WITH LastRead AS (
+        SELECT last_read_message_id
+        FROM room_user
+        WHERE room_user_id = :room_user_id
+    )
+    SELECT 
+        COUNT(M.message_id) AS unread_message_count
+    FROM 
+        message M
+    JOIN 
+        room_user RU ON RU.room_user_id = M.room_user_id
+    JOIN 
+        room R ON R.room_id = RU.room_id AND R.room_id = :room_id
+    JOIN 
+        LastRead LR ON M.message_id > LR.last_read_message_id;
+    ;
     `;
 
     let params = {
-        user_id: postData.user_id
+        room_id: postData.room_id,
+        room_user_id: postData.room_user_id
     }
 
     try {
@@ -244,24 +264,60 @@ async function sendMessage(postData) {
         return false;
     }
 }
-
-async function updateLastReadMessage(postData) {
-    let updateLastReadMessageSQL = `
+async function getLastReadMessageId(postData) {
+    let getLastReadMessageIdSQL = `
+    select last_read_message_id from room_user
+    where user_id = :user_id and room_id = :room_id;
     `;
 
     let params = {
-        room_user_id: postData.room_user_id
+        room_id: postData.room_id,
+        user_id: postData.user_id
+    }
+
+    try {
+        const results = await database.query(getLastReadMessageIdSQL, params);
+
+        console.log("Successfully loaded last read message id");
+        console.log(results[0]);
+        return results[0];
+    }
+    catch (err) {
+        console.log("Error loading last read message id");
+        console.log(err);
+        return false;
+    }
+}
+
+async function updateLastReadMessage(postData) {
+    let updateLastReadMessageSQL = `
+    UPDATE room_user
+        SET last_read_message_id = (
+            SELECT MAX(message_id) FROM (
+                SELECT M.message_id
+                FROM message M
+                JOIN room_user RU ON RU.room_user_id = M.room_user_id
+                JOIN room R ON R.room_id = RU.room_id 
+                WHERE R.room_id = :room_id
+            ) AS subquery
+        )
+        WHERE user_id = :user_id AND room_id = :room_id;
+    `;
+
+    let params = {
+        room_id: postData.room_id,
+        user_id: postData.user_id
     }
 
     try {
         const results = await database.query(updateLastReadMessageSQL, params);
 
-        console.log("Successfully sent message");
+        console.log("Successfully update last read message id");
         console.log(results[0]);
         return results[0];
     }
     catch (err) {
-        console.log("Error sending message");
+        console.log("Error updating last read message id");
         console.log(err);
         return false;
     }
@@ -351,12 +407,12 @@ async function checkUser(postData) {
     SELECT U.user_id 
     FROM room_user RU
     JOIN user U ON U.user_id = RU.user_id
-    WHERE room_id = :room_id and username = :username;
+    WHERE room_id = :room_id and U.user_id = :user_id;
     `;
 
     let params = {
         room_id: postData.room_id,
-        username: postData.username
+        user_id: postData.user_id
     }
 
     try {
@@ -386,5 +442,7 @@ module.exports = {
     getEmojis,
     addEmoji,
     updateLastReadMessage,
-    checkUser
+    checkUser,
+    getLastReadMessageId,
+
 };
