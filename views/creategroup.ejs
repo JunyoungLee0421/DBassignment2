@@ -1,14 +1,55 @@
 <%- include("templates/header") %>
-    create room
-    <form action='/publishGroup' method='post'>
-        <input name='roomname' type='text' placeholder='enter a room name' required>
-        <div class="checkbox-list">
-            <% userResults.forEach(user=> { %>
-                <label>
-                    <input type="checkbox" name="selectedUsers" value="<%= user.user_id %>">
-                    <%= user.username %>
-                </label><br>
-                <% }); %>
-        </div>
-        <button>Create Group</button>
-    </form>
+    <div class="form-container">
+        <h2 class="form-title">Create Room</h2>
+        <form action='/publishGroup' method='post' class="create-room-form">
+            <input name='roomname' type='text' placeholder='Enter a room name' required>
+            <div class="checkbox-list">
+                <% userResults.forEach(user=> { %>
+                    <label>
+                        <input type="checkbox" name="selectedUsers" value="<%= user.user_id %>">
+                        <%= user.username %>
+                    </label><br>
+                    <% }); %>
+            </div>
+            <button class="form-button">Create Group</button>
+        </form>
+    </div>
+    <%- include("templates/footer") %>
+
+        <style>
+            .form-container {
+                max-width: 400px;
+                margin: 0 auto;
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #f9f9f9;
+            }
+
+            .form-title {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .checkbox-list label {
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            .form-button {
+                display: block;
+                width: 100%;
+                padding: 10px;
+                border: none;
+                border-radius: 5px;
+                background-color: #007bff;
+                color: #fff;
+                font-size: 16px;
+                cursor: pointer;
+                margin-top: 5px;
+            }
+
+            .form-button:hover {
+                background-color: #0056b3;
+            }
+        </style>

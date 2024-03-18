@@ -1,24 +1,3 @@
-<!-- <%- include("templates/header") %>
-    Invite Member
-    <p id="current-users">Current users in the group:
-        <% for (var i=0; i < members.length; i++) { %>
-            <span>
-                <%= members[i].username %>
-            </span>
-            <% } %>
-    </p>
-    <form action='/invite' method='post'>
-        <input type="hidden" name="room_id" value="<%=room_id%>">
-        <div class="checkbox-list">
-            <% userResults.forEach(user=> { %>
-                <label>
-                    <input type="checkbox" name="selectedUsers" value="<%= user.user_id %>">
-                    <%= user.username %>
-                </label><br>
-                <% }); %>
-        </div>
-        <button>Invite Members</button>
-    </form> -->
 <%- include("templates/header") %>
     <div class="form-container">
         <h2 class="form-title">Invite Member</h2>

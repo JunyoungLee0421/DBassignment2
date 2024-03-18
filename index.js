@@ -101,7 +101,7 @@ app.get('/authindex', async (req, res) => {
     }
 })
 
-app.use('/chatRoom/:room_id', inviteValidation);
+app.use('/chatRoom/:room_id', userAuthorization);
 
 /**chat room by room id */
 app.get('/chatRoom/:room_id', async (req, res) => {
@@ -151,7 +151,7 @@ app.get('/chatRoom/:room_id', async (req, res) => {
 })
 
 /** function to check if user is in the room */
-async function isInvited(req) {
+async function isAuthorized(req) {
     var room_id = req.params.room_id;
     var username = req.session.username;
     var userID = await create_room.getUserId({ username: username });
@@ -165,8 +165,8 @@ async function isInvited(req) {
     return true;
 }
 
-async function inviteValidation(req, res, next) {
-    var result = await isInvited(req);
+async function userAuthorization(req, res, next) {
+    var result = await isAuthorized(req);
     if (result == false) {
         res.status(400);
         res.render("400");
