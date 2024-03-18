@@ -1,7 +1,8 @@
 <%- include("templates/header") %>
     <div id="chatroom">
         <div id="chatbox">
-            <h2>Chat room</h2>
+            <h2>Chat room # <%= room_id %>
+            </h2>
             <div id="messageheader">
                 <p id="current-users">Current users in the group:
                     <% for (var i=0; i < members.length; i++) { %>
@@ -10,10 +11,9 @@
                         </span>
                         <% } %>
                 </p>
-                <a href="/inviteMember/<%=room_id%>"><button>Invite</button></a>
-                <!-- <form action='/invite' method='post'>
-                    <button>Invite</button>
-                </form> -->
+                <a href="/inviteMember/<%=room_id%>" class="custom-link">
+                    <button class="custom-button">Invite</button>
+                </a>
             </div>
             <div id="messagebox">
                 <% for (var i=0; i < messages.length; i++) { %>
@@ -117,19 +117,24 @@
                                         <% } %>
             </div>
 
-            <form action='/sendText' method='post'>
+            <!-- <form action='/sendText' method='post'>
                 <input type="hidden" name="room_id" value="<%=room_id%>">
                 <input name='text' type='text' placeholder='Enter text...'>
                 <button>Send Message</button>
+            </form> -->
+            <form action='/sendText' method='post' class="message-form">
+                <input type="hidden" name="room_id" value="<%=room_id%>">
+                <input name='text' type='text' placeholder='Enter text...' class="message-input">
+                <button class="message-button">Send Message</button>
             </form>
         </div>
     </div>
-    <form action='/home' method='post'>
+    <form action='/home' method='post' class="button-container">
         <input type="hidden" name="room_id" value="<%=room_id%>">
-        <button>Go to Home</button>
+        <button class="form-button">Go to Home</button>
     </form>
-    <form action='/logout' method='post'>
-        <button>Logout</button>
+    <form action='/logout' method='post' class="button-container">
+        <button class="form-button">Logout</button>
     </form>
     <%- include("templates/footer") %>
         <script>
@@ -138,3 +143,76 @@
                 form.style.display = form.style.display === "none" ? "block" : "none";
             }
         </script>
+
+        <style>
+            .button-container {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                /* Adjust margin as needed */
+            }
+
+            .form-button {
+                padding: 10px 20px;
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .form-button:hover {
+                background-color: #0056b3;
+            }
+
+            .message-form {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 20px;
+                /* Adjust margin as needed */
+            }
+
+            .message-input {
+                flex: 1;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px 0 0 5px;
+                font-size: 16px;
+            }
+
+            .message-button {
+                padding: 10px 20px;
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                border-radius: 0 5px 5px 0;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .message-button:hover {
+                background-color: #0056b3;
+            }
+
+            .custom-link {
+                display: inline-block;
+            }
+
+            .custom-button {
+                padding: 10px 20px;
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                text-decoration: none;
+                /* Remove underline from anchor element */
+            }
+
+            .custom-button:hover {
+                background-color: #0056b3;
+            }
+        </style>

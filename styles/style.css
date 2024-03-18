@@ -114,8 +114,9 @@ form {
 .unreadLine::after {
     content: "";
     height: 1px;
-    background-color: silver;
     flex-grow: 1;
+    border-top: 1px dotted silver;
+    /* Change background-color to border-top */
 }
 
 .unreadLine::before {

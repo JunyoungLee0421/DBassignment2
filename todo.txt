@@ -3,6 +3,7 @@
 2. show messages(completed)
 3. send messages (completed)
 4. invite people inside chatroom (completed)
+5. # of unread messages (completed)
 6. emojis (completed)
 7. chatroom에 없으면 못들어가게 (completed)
 9. last sent formatting (completed)
@@ -10,8 +11,6 @@
 11. updated last read message (completed)
 
 ### works but needs improvements ###
-5. # of unread messages -> works, but maybe polish a bit 좀 병신같이씀
-
 ### needs to do ###
 8. css
 

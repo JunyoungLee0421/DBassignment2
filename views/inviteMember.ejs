@@ -1,4 +1,4 @@
-<%- include("templates/header") %>
+<!-- <%- include("templates/header") %>
     Invite Member
     <p id="current-users">Current users in the group:
         <% for (var i=0; i < members.length; i++) { %>
@@ -18,4 +18,72 @@
                 <% }); %>
         </div>
         <button>Invite Members</button>
-    </form>
+    </form> -->
+<%- include("templates/header") %>
+    <div class="form-container">
+        <h2 class="form-title">Invite Member</h2>
+        <p id="current-users">Current users in the group: <%= members.map(member=> member.username).join(' ') %></p>
+        <form action='/invite' method='post' class="invite-form">
+            <input type="hidden" name="room_id" value="<%=room_id%>">
+            <div class="checkbox-list">
+                <% userResults.forEach(user=> { %>
+                    <label>
+                        <input type="checkbox" name="selectedUsers" value="<%= user.user_id %>">
+                        <%= user.username %>
+                    </label>
+                    <% }); %>
+            </div>
+            <button class="form-button">Invite Members</button>
+        </form>
+        <form action='/backToChat' method='post'>
+            <input type="hidden" name="room_id" value="<%=room_id%>">
+            <button class="form-button">Back to Chat Room</button>
+        </form>
+    </div>
+    <%- include("templates/footer") %>
+
+
+
+        <style>
+            .form-container {
+                max-width: 400px;
+                margin: 0 auto;
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #f9f9f9;
+            }
+
+            .form-title {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .current-users-list {
+                list-style-type: none;
+                padding: 0;
+                margin-bottom: 10px;
+            }
+
+            .checkbox-list label {
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            .form-button {
+                display: block;
+                width: 100%;
+                padding: 10px;
+                border: none;
+                border-radius: 5px;
+                background-color: #007bff;
+                color: #fff;
+                font-size: 16px;
+                cursor: pointer;
+                margin-top: 5px;
+            }
+
+            .form-button:hover {
+                background-color: #0056b3;
+            }
+        </style>

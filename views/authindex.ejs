@@ -1,13 +1,13 @@
 <%- include("templates/header") %>
-    <h1>Hello <%= name%>!</h1>
-    <h2>Your chats</h2>
-    <table border="1">
+    <h1 style="text-align: center;">Hello <%= name %>!</h1>
+    <h2 style="text-align: center;">Your chats</h2>
+    <table class="chat-table">
         <thead>
             <tr>
                 <th>Group ID</th>
                 <th>Group Name</th>
-                <th>Last message Date</th>
-                <th># unread</th>
+                <th>Last Message Date</th>
+                <th># Unread</th>
             </tr>
         </thead>
         <tbody>
@@ -16,11 +16,9 @@
                     <td>
                         <%= results[i].room_id %>
                     </td>
-                    <td>
-                        <a href="chatRoom/<%=results[i].room_id%>">
+                    <td><a href="chatRoom/<%= results[i].room_id %>">
                             <%= results[i].name %>
-                        </a>
-                    </td>
+                        </a></td>
                     <td>
                         <%= results[i].last_sent_message_datetime %>
                     </td>
@@ -31,12 +29,52 @@
                 <% } %>
         </tbody>
     </table>
-    <p># of groups : <%= results.length %>
+    <p style="text-align: center;"># of groups: <%= results.length %>
     </p>
-    <form action='/createGroup' method='post'>
-        <button>New Group</button>
-    </form>
-    <form action='/logout' method='post'>
-        <button>Logout</button>
-    </form>
+    <div style="text-align: center;">
+        <form action='/createGroup' method='post' style="display: inline-block;">
+            <button class="btn">New Group</button>
+        </form>
+        <form action='/logout' method='post' style="display: inline-block;">
+            <button class="btn">Logout</button>
+        </form>
+    </div>
     <%- include("templates/footer") %>
+
+
+        <style>
+            /* Style for the table */
+            .chat-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .chat-table th,
+            .chat-table td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+
+            .chat-table th {
+                background-color: #f2f2f2;
+            }
+
+            /* Style for buttons */
+            .btn {
+                background-color: #6a8ae8;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                margin: 10px 0;
+                cursor: pointer;
+                border-radius: 5px;
+            }
+
+            .btn:hover {
+                background-color: #5067a3;
+            }
+        </style>

@@ -301,6 +301,12 @@ app.post('/home', async (req, res) => {
 
 })
 
+/**post method for go back to chat room */
+app.post('/backToChat', async (req, res) => {
+    var room_id = req.body.room_id;
+    res.redirect('/chatRoom/' + room_id);
+})
+
 /**post method for logout */
 app.post('/logout', async (req, res) => {
     req.session.destroy();

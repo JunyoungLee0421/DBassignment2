@@ -1,16 +1,71 @@
 <%- include("templates/header") %>
-    create user
-    <form action='/signup' method='post'>
-        <input name='username' type='text' placeholder='username'>
-        <input name='password' type='password' placeholder='password'>
-        <button>Submit</button>
-    </form>
-    <% if (missingusername) { %>
-        <br> Missing Username
-        <% } else if (missingpassword){ %>
-            <br> Missing Password
-            <% } else if (invalidpassword) { %>
-                <br> Invalid password. Your password should contain 10 >= characters, with at least one uppercase
-                character, number and symbol ; valid symbols : !@#$%^&*?_
-                <% } %>
-                    <%- include("templates/footer") %>
+
+    <div class="form-container">
+        <h2>Create User</h2>
+        <form action='/signup' method='post'>
+            <div class="input-wrapper">
+                <input name='username' type='text' placeholder='Username'>
+            </div>
+            <div class="input-wrapper">
+                <input name='password' type='password' placeholder='Password'>
+            </div>
+            <button class="custom-button">Submit</button>
+        </form>
+        <% if (missingusername) { %>
+            <div class="error-message">Missing Username</div>
+            <% } else if (missingpassword) { %>
+                <div class="error-message">Missing Password</div>
+                <% } else if (invalidpassword) { %>
+                    <div class="error-message">
+                        Invalid password. Your password should contain at least 10 characters, including one uppercase
+                        letter, one number, and one of the following symbols: !@#$%^&*?_
+                    </div>
+                    <% } %>
+    </div>
+
+    <%- include("templates/footer") %>
+
+        <style>
+            .form-container {
+                max-width: 400px;
+                margin: 50px auto;
+                padding: 20px;
+                background-color: #f7f7f7;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .input-wrapper {
+                margin-bottom: 20px;
+            }
+
+            .input-wrapper input {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                font-size: 16px;
+            }
+
+            .custom-button {
+                display: block;
+                width: 100%;
+                padding: 10px;
+                background-color: #6a8ae8;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                font-size: 16px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .custom-button:hover {
+                background-color: #5067a3;
+            }
+
+            .error-message {
+                margin-top: 10px;
+                color: red;
+            }
+        </style>

@@ -1,15 +1,68 @@
 <%- include("templates/header") %>
-    log in
-    <form action='/login' method='post'>
-        <input name='username' type='text' placeholder='username'>
-        <input name='password' type='password' placeholder='password'>
-        <button>Submit</button>
-    </form>
-    <% if (badlogin) { %>
-        <br> Username and password not found
-        <% } else if (missingpassword){ %>
-            <br> Missing Password
-            <% } else if (missingusername){ %>
-                <br> Missing Username
-                <% } %>
-                    <%- include("templates/footer") %>
+
+    <div class="form-container">
+        <h2>Login</h2>
+        <form action='/login' method='post'>
+            <div class="input-wrapper">
+                <input name='username' type='text' placeholder='Username'>
+            </div>
+            <div class="input-wrapper">
+                <input name='password' type='password' placeholder='Password'>
+            </div>
+            <button class="custom-button">Submit</button>
+        </form>
+        <% if (badlogin) { %>
+            <div class="error-message">Username and password not found</div>
+            <% } else if (missingpassword) { %>
+                <div class="error-message">Missing Password</div>
+                <% } else if (missingusername) { %>
+                    <div class="error-message">Missing Username</div>
+                    <% } %>
+    </div>
+
+    <%- include("templates/footer") %>
+
+        <style>
+            .form-container {
+                max-width: 400px;
+                margin: 50px auto;
+                padding: 20px;
+                background-color: #f7f7f7;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .input-wrapper {
+                margin-bottom: 20px;
+            }
+
+            .input-wrapper input {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                font-size: 16px;
+            }
+
+            .custom-button {
+                display: block;
+                width: 100%;
+                padding: 10px;
+                background-color: #6a8ae8;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                font-size: 16px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .custom-button:hover {
+                background-color: #5067a3;
+            }
+
+            .error-message {
+                margin-top: 10px;
+                color: red;
+            }
+        </style>
