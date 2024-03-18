@@ -9,5 +9,8 @@
         <br> Missing Username
         <% } else if (missingpassword){ %>
             <br> Missing Password
-            <% } %>
-                <%- include("templates/footer") %>
+            <% } else if (invalidpassword) { %>
+                <br> Invalid password. Your password should contain 10 >= characters, with at least one uppercase
+                character, number and symbol ; valid symbols : !@#$%^&*?_
+                <% } %>
+                    <%- include("templates/footer") %>

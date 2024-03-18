@@ -334,18 +334,20 @@ app.get('/login', (req, res) => {
 app.get('/signup', (req, res) => {
     var missingusername = req.query.missingusername;
     var missingpassword = req.query.missingpassword;
+    var invalidpassword = req.query.invalidpassword;
     res.render("signup", {
         missingusername: missingusername,
-        missingpassword: missingpassword
+        missingpassword: missingpassword,
+        invalidpassword: invalidpassword
     })
 });
 
 app.post('/signup', async (req, res) => {
     var username = req.body.username;
     var password = req.body.password;
+    var passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{10,32}$/;
 
-    var hashedPassword = bcrypt.hashSync(password, saltRounds);
-
+    //check if username and password is typed
     if (!username) {
         res.redirect('signup?missingusername=1')
         return;
@@ -353,6 +355,15 @@ app.post('/signup', async (req, res) => {
         res.redirect('signup?missingpassword=1')
         return;
     }
+
+    //password validation
+    if (!(passwordRegex.test(password))) {
+        res.redirect('signup?invalidpassword=1')
+        return;
+    }
+
+    var hashedPassword = bcrypt.hashSync(password, saltRounds);
+
     var success = await db_users.createUser({ user: username, hashedPassword: hashedPassword });
 
     if (success) {

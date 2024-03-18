@@ -1,4 +1,5 @@
 ### completed ###
+1. password validation (completed)
 2. show messages(completed)
 3. send messages (completed)
 4. invite people inside chatroom (completed)
@@ -6,13 +7,13 @@
 7. chatroom에 없으면 못들어가게 (completed)
 9. last sent formatting (completed)
 10. go back to main page button (completed)
+11. updated last read message (completed)
 
 ### works but needs improvements ###
 5. # of unread messages -> works, but maybe polish a bit 좀 병신같이씀
 
 ### needs to do ###
-1. password validation -> do it at the end
 8. css
-11. updated last read message
+
 
 
