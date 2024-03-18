@@ -1,5 +1,12 @@
 <%- include("templates/header") %>
     Invite Member
+    <p id="current-users">Current users in the group:
+        <% for (var i=0; i < members.length; i++) { %>
+            <span>
+                <%= members[i].username %>
+            </span>
+            <% } %>
+    </p>
     <form action='/invite' method='post'>
         <input type="hidden" name="room_id" value="<%=room_id%>">
         <div class="checkbox-list">

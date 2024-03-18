@@ -235,9 +235,10 @@ app.post('/publishGroup', async (req, res) => {
 /**invite member page by room id */
 app.get('/inviteMember/:room_id', async (req, res) => {
     var room_id = req.params.room_id;
-
+    var username = req.session.username;
+    var members = await db_manager.getMembers({ room_id: room_id, username: username });
     var userResults = await db_manager.getMembersNotInRoom({ room_id: room_id });
-    res.render("inviteMember", { room_id: room_id, userResults: userResults })
+    res.render("inviteMember", { room_id: room_id, userResults: userResults, members: members })
 })
 
 /**post method for inviting users */

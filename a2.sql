@@ -258,7 +258,25 @@ select * from room_user;
 
 insert into message (room_user_id, text) values (0, "");
 
+
+#get last_read_message_id
+select last_read_message_id from room_user
+where user_id = 1 and room_id = 1;
+
+select * from room_user;
+
 #update last_read_message
+UPDATE room_user
+        SET last_read_message_id = (
+            SELECT MAX(message_id) FROM (
+                SELECT M.message_id
+                FROM message M
+                JOIN room_user RU ON RU.room_user_id = M.room_user_id
+                JOIN room R ON R.room_id = RU.room_id 
+                WHERE R.room_id = :room_id
+            ) AS subquery
+        )
+        WHERE user_id = :user_id AND room_id = :room_id;
 
 #get emoji
 SELECT count(E.name) as emoji_count, E.name, E.image
@@ -280,14 +298,22 @@ WHERE room_id = 2 and username = "tim";
 
 #detele & reset auto increment statements
 delete from user where user_id in (7,8,9);
+delete from user;
+ALTER TABLE user AUTO_INCREMENT = 1;
+select * from user;
 
+#tim, tony, thomas, jack, brian, dylan
 delete from room_user where room_user_id in (32, 33, 34, 35);
 ALTER TABLE room_user AUTO_INCREMENT = 32;
 delete from room where room_id in (9, 10);
 ALTER TABLE room AUTO_INCREMENT = 9;
 
-delete from message where message_id in (30, 31, 32);
+delete from message where message_id in (30, 31, 32, 33, 34, 35);
 ALTER TABLE message AUTO_INCREMENT = 30;
 
+select * from message;
+
+delete from room_user;
+delete from message_emoji_user;
 
 
